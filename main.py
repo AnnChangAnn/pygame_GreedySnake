@@ -22,7 +22,7 @@ pygame.init()
 pygame.display.set_caption('Greedy Snake')
 game_window = pygame.display.set_mode((window_x, window_y))
 
-#import class
+# import class
 wall = Wall(510,492)
 snake = Snake(center)
 food = Food()
@@ -32,10 +32,16 @@ food.random_food(game_window, wall.edge, center)
 # FPS（每秒幀數）控制器
 fps = pygame.time.Clock()
 
-#player_pos = pygame.Vector2(250.0, 250.0)
-while True:
+game_is_over = False
+
+while not game_is_over:
+    # 畫面以黑色塗滿
     game_window.fill(black)
+
+    # draw wall
     wall.create_wall(game_window, center)
+
+    # 方向控制
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
@@ -51,11 +57,19 @@ while True:
                 snake.change_angle.append('left')
                 snake.change_to()
 
+    # 蛇移動，並確認是否吃到食物
     snake.move()
     if snake.eat_food(food.position):
         food.random_food(game_window, wall.edge, center)
+    
+    # 是否撞牆或撞到自己
+    if snake.hit_the_wall(wall.edge) or snake.hit_itself():
+        game_is_over = True
+    
+    # draw food and snake
     food.draw_food(game_window)
     snake.draw_snake(game_window)
+
         #game_window.fill(black)
         #game_window.fill(black,[490,490,-490,-490])
         #pygame.draw.rect(game_window, green, pygame.Rect(position[0], position[1], 10, 10))
