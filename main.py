@@ -4,6 +4,7 @@ import random
 from wall import Wall
 from snake import Snake
 from food import Food
+from score import Score
 
 # 視窗大小
 window_x = 540
@@ -20,14 +21,17 @@ blue = pygame.Color(0, 0, 255)
 # 初始化遊戲
 pygame.init()
 pygame.display.set_caption('Greedy Snake')
-game_window = pygame.display.set_mode((window_x, window_y))
+surface = pygame.display.set_mode((window_x, window_y))
 
 # import class
 wall = Wall(510,492)
 snake = Snake(center)
 food = Food()
-wall.create_wall(game_window, center)
-food.random_food(game_window, wall.edge, center)
+score = Score('times new roman', 20)
+wall.create_wall(surface, center)
+print(wall.edge)
+food.random_food(surface, wall.edge, center)
+print(food.position)
 
 # FPS（每秒幀數）控制器
 fps = pygame.time.Clock()
@@ -36,10 +40,10 @@ game_is_over = False
 
 while not game_is_over:
     # 畫面以黑色塗滿
-    game_window.fill(black)
+    surface.fill(black)
 
     # draw wall
-    wall.create_wall(game_window, center)
+    wall.create_wall(surface, center)
 
     # 方向控制
     for event in pygame.event.get():
@@ -60,20 +64,21 @@ while not game_is_over:
     # 蛇移動，並確認是否吃到食物
     snake.move()
     if snake.eat_food(food.position):
-        food.random_food(game_window, wall.edge, center)
+        score.get_score(1)
+        food.random_food(surface, wall.edge, center)
     
     # 是否撞牆或撞到自己
     if snake.hit_the_wall(wall.edge) or snake.hit_itself():
         game_is_over = True
     
-    # draw food and snake
-    food.draw_food(game_window)
-    snake.draw_snake(game_window)
-
-        #game_window.fill(black)
-        #game_window.fill(black,[490,490,-490,-490])
-        #pygame.draw.rect(game_window, green, pygame.Rect(position[0], position[1], 10, 10))
-        #pygame.draw.circle(game_window, "green", player_pos, 10)
-        
+    # draw food, snake, score
+    food.draw_food(surface)
+    snake.draw_snake(surface)
+    score.show_score(surface)
+    
+    # update surface
     pygame.display.update()
-    fps.tick(10)
+
+    # add speed when get score
+    speed = 10 + score.value//3
+    fps.tick(speed)
