@@ -8,12 +8,14 @@ class Snake:
                      [center[0] - self.panel, center[1]],
                      [center[0] - 2*self.panel, center[1]]]
         self.head = self.body[0]
+        self.headcolor = pygame.Color(0, 255, 179)      #bluegreen
         self.angle = 'right'
         self.change_angle = []
 
     # draw the snake
     def draw_snake(self, surface):
-        for pos in self.body:
+        pygame.draw.rect(surface, self.headcolor, pygame.Rect(self.head[0], self.head[1], self.panel, self.panel))
+        for pos in self.body[1:]:
             pygame.draw.rect(surface, self.color, pygame.Rect(pos[0], pos[1], self.panel, self.panel))
 
     # snake move
